@@ -8,11 +8,6 @@
 
 using namespace std;
 
-void print()
-{
-
-}
-
 int main()
 {
 	fstream file;
@@ -21,6 +16,7 @@ int main()
 	string pere;
 	string fils;
 	int dist;
+	map < string, int> distMap;
 	map < string,vector < pair <string,int> > > graph;
 
 	while(file.eof() == false)
@@ -30,6 +26,7 @@ int main()
 		s >> pere;
 		cout << "pere: " << pere << " ";
 		graph[pere];
+		distMap[pere] = -1;
 		while(s >> fils)
 		{
 			s >> dist;
@@ -40,8 +37,45 @@ int main()
 
 	}
 	// soucre = 2
-	int x =0;
-	cout << graph["2"][x].first;
+	string x = "2";
+	int min = 4294967296;
+	for(int i =0; i< graph[x].size(); i++)
+	{
+		if(distMap[graph[x][i].first] < graph[x][i].second)
+		{
+			distMap[graph[x][i].first] = graph[x][i].second;
+		}
+		if(graph[x][i].second < min)
+			min = graph[x][i].second;
+	}
+
+	/*int mmin = 0; // more than min
+	int min =4294967296;
+	string nom;
+	string x = "2";
+	int otherRoute =0;
+	for(int i =0; i< graph[x].size(); i++)
+	{
+		if(graph[x][i].second < min)
+		{
+			mmin = min;
+			min = graph[x][i].second;
+			nom = graph[x][i].first;
+		
+			if(otherRoute >= min)
+			{
+				boolMap[nom] = true;
+				x = nom;
+			}
+			else
+			{
+			
+			}
+			otherRoute = mmin;
+		}
+		
+	}*/
+	
 
 	
 
