@@ -50,11 +50,11 @@ int main()
 		cout << endl;
 
 	}
-	// soucre = 2
-	string x = "2";
-	distMap["2"].dist = 0;
-	distMap["2"].vue = 1;
-	distMap["2"].prev = "0";
+	string source = "2";
+	string x = source;
+	distMap[source].dist = 0;
+	distMap[source].vue = 1;
+	distMap[source].prev = "0";
 	
 	string nameOfTheSmallest;
 	for (int m = 0; m < compteur; m++)
@@ -67,7 +67,11 @@ int main()
 				distMap[graph[x][i].first].prev = x;
 			if (distMap[graph[x][i].first].prev != "0" && (distMap[graph[x][i].first].dist == -1 || (graph[x][i].second + distMap[distMap[graph[x][i].first].prev].dist) < distMap[graph[x][i].first].dist))
 			{
+				
+				distMap[graph[x][i].first].prev = x;
 				distMap[graph[x][i].first].dist = (graph[x][i].second + distMap[distMap[graph[x][i].first].prev].dist);
+				//distMap[graph[x][i].first].dist = (graph[x][i].second + distMap[graph[x][i].first].dist);
+				
 				/// distMap[6].prev is getting 7 instead of 5... BUG ALERT !!!
 			}
 				
@@ -85,6 +89,21 @@ int main()
 		distMap[nameOfTheSmallest].vue = true;
 		x = nameOfTheSmallest;
 	}
+	for (it = distMap.begin(); it != distMap.end(); it++)
+		{
+			string print;
+			cout << "from source("<<source<<") " << "to " << "node " << it->first << endl;
+			cout << "path: " ;
+			while(print!= "2")
+			{
+				
+				it->second.prev;
+			}
+			
+			
+			
+
+		}
 
 
 	return 0;
