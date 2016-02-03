@@ -1,0 +1,114 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+#include <sstream>
+#include <utility>
+#include <string>
+#include <map>
+
+
+using namespace std;
+
+int compteur = 0;
+
+struct node
+{
+	string prev;
+	int dist;
+	bool vue;
+};
+
+int main()
+{	
+	string source;
+	cout << "quelle sera la source?" << endl << endl; // la source avec laquelle on va trouver la distance de chaque noeud
+	cin >> source;
+	fstream file;
+	file.open("inputTest.txt");
+	string valeur;
+	string pere;
+	string fils;
+	int dist;
+	map < string, node > distMap;  // une map pour garder en memoire la distance la plus courte, le noeud precedent, et si nous l'avons vue auparavent ou non
+	map < string, node >::iterator it; // un iterateur pour pouvoir parcourir la distMap
+	map < string, vector < pair <string, int> > > graph; //les containers que j'utilise pour representer mon graph, j'utilise une map de vectoeur de pair de string et int. desoler si sais un peu comppliquer a lire
+
+	while (file.eof() == false) // ceci est le bloc que j'utilise pour creer mon graph
+	{
+		getline(file, valeur);	// prendre une ligne du fichier
+		stringstream s(valeur); // diviser en plusieur string 
+		s >> pere; // donner une des valeurs dans s a pere
+		cout << "pere: " << pere << " ";
+		graph[pere]; // cree une espace pour pere dans mon arbre
+		compteur++;
+		distMap[pere].dist = -1;	// mettre des valeurs "place holder"
+		distMap[pere].prev = "-1"; // ...
+		distMap[pere].vue = false; // ...
+		while (s >> fils) 
+		{
+			s >> dist;
+			cout << " -> " << "fils: " << fils << " distance du pere: " << dist;
+			graph[pere].push_back(make_pair(fils, dist)); // mettre une pair du fils et de sa distance dans le vector de graph[pere]
+		}
+		cout << endl;
+
+	}
+	
+	string x = source;
+	distMap[source].dist = 0;// valeur de debut dans la map de distance.
+	distMap[source].vue = 1; // ...
+	distMap[source].prev = "0"; //...
+	string nameOfTheSmallest;	// nom du neoud a distance plus petite qui est non vue
+	for (int m = 0; m < compteur; m++)  // bloc de code qui va remplir ma map de distance
+	{
+		int smallest = 32767; // grande valeur
+		int i = 0;
+		for (; i< graph[x].size(); i++)
+		{	
+			if(distMap[graph[x][i].first].prev == "-1") // si "-1" cela veux dire que la valeur de x est automatiquement meilleur
+				distMap[graph[x][i].first].prev = x;
+			if (distMap[graph[x][i].first].prev != "0" && (distMap[graph[x][i].first].dist == -1 || (graph[x][i].second + distMap[distMap[graph[x][i].first].prev].dist) < distMap[graph[x][i].first].dist) && distMap[graph[x][i].first].vue == false) // premier if: est pour ne pas que si on regarde un bloc avec rien dedans que sa ne creer pas une distance 0 dans ma map. deuxieme if: si distance -1, lautre est automatiquement meilleur, troisieme verifie quelle distance est plus grand, quatrieme: il ne faut pas que le noeud soit deja vue
+			{
+				
+				distMap[graph[x][i].first].prev = x; // change valeur du precedent
+				distMap[graph[x][i].first].dist = (graph[x][i].second + distMap[distMap[graph[x][i].first].prev].dist); // met nouvelle valeur pour distance egal a la dist de ce neoud et des noeud precedent.
+			}
+				
+		}
+		for (it = distMap.begin(); it != distMap.end(); it++) // parcour la map de distance pour voir quelle distance est la plus petite.
+		{
+			if (it->second.dist < smallest && it->second.vue != true && it->second.dist != -1)
+			{
+				smallest = it->second.dist;
+				nameOfTheSmallest = it->first;
+			}
+		}
+		distMap[nameOfTheSmallest].vue = true;
+		x = nameOfTheSmallest;
+	}
+
+	cout <<endl << "------------------------" << endl << endl;
+
+	for (it = distMap.begin(); it != distMap.end(); it++) // bloc de code qui imprime les paths a l'ecran
+		{
+			string flag = "";
+			string print = "";
+			cout << "from source(" << source << ") " << "to " << "node " << it->first << endl;
+			cout << "path: " ;
+			flag = it->first;
+			print = print + flag;
+			while(flag!= source && flag != "-1" && flag != "") // tant que nous ne somme pas revenue a la source, ou que le flag na rien dedans,continue
+			{
+				flag = distMap[flag].prev;
+				print = flag + " " + print; // met les chose dans print dans lorde inverse pour creer un chemin de source jusqua noeud.
+			}
+			if(it->second.dist == -1 || flag == "") // si flag est "-1" ou est "" , le noeud est intouchable
+				cout << "node is unreachable" << endl << endl;
+			else
+				cout << print << endl << "cost: " << it->second.dist << endl << endl; // print mes paths.
+
+		}
+
+
+	return 0;
+}
