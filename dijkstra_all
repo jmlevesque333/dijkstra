@@ -1,0 +1,72 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class dijkstra{
+	vector <vector <int> > adjMatrix;
+	vector <int> path;
+	vector <int> dist;
+public:
+	int nbRequests;
+	dijkstra(int nbNodes, int nbRequests){
+		this->nbRequests = nbRequests;
+		for(int i = 0; i <= nbNodes; i++){
+			vector <int> line;
+			for(int j = 0; j <= nbNodes; j++){
+				line.push_back(-1);}
+			adjMatrix.push_back(line);}}
+	void print();
+	void solution(int source);
+	void add(int node1, int node2)
+	{
+		adjMatrix[node1][node2] = 6;
+	}
+};
+
+void dijkstra::solution(int source){
+	int closestNode, min, nbNodes, nbVertices;
+
+	vector <int> visited;
+
+	for(int i = 1; i <= nbNodes; i++){
+		dist[i] = adjMatrix[source][i];
+		visited[i] = 0;
+		path[i] = source;}
+	visited[source] = 1;
+	for(int i = 1; i <= nbNodes; i++){
+		closestNode = -1;
+		min = 99999;
+		for(int j =1; j <= nbNodes; j++){
+			if(visited[j] == 0){
+				if(dist[j] < min){
+					min = dist[j];
+					closestNode = j;}}}
+		if(closestNode = -1) return;
+		visited[closestNode] = 1;
+		for(int v = 1; v <= nbNodes; v++){
+			if((visited[v] == 0) && (dist[closestNode] + adjMatrix[closestNode][v] < dist[v])){
+				dist[v] = dist[closestNode] + adjMatrix[closestNode][v];
+				path[v] = closestNode;}}}}
+
+int main()
+{
+	int nbRequests = 0;
+	int nbNodes = 0;
+	int nbVertices = 0;
+	int node1 = 0;
+	int node2 = 0;
+	int source = 0;
+	cin >> nbRequests;
+	cin >> nbNodes;
+	cin >> nbVertices;
+	dijkstra a(nbNodes, nbRequests);
+	for(int i =0; i < nbRequests; i++)
+	{
+		cin >> node1 >> node2;
+		a.add(node1,node2);
+	}
+	cin >> source;
+	a.solution(source);
+	return 0;
+}
